@@ -46,6 +46,13 @@ export default function Login() {
       <p className="mb-6 text-sm text-slate-500">
         Demo: use qualquer e-mail válido e a senha <strong>123456</strong>.
       </p>
+      <p className="mb-6 text-sm text-slate-500">
+        Demo: use qualquer e-mail válido e a senha <strong>123456</strong>.
+        <br />
+        Admin: <strong>admin@autoparts.com</strong> / <strong>123456</strong>.
+      </p>
+
+
 
       <form onSubmit={handleSubmit((d) => mutate(d))} noValidate className="space-y-4">
         <FormField label="E-mail" error={errors.email?.message}>
