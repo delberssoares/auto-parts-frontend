@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "../components/FormField";
@@ -22,7 +22,7 @@ export default function Checkout() {
     const user = useAuth((s) => s.user)!;
 
 
-    const { mutate, isPending, isError } = useCreateOrder();
+    const { mutate, isPending, isError, error } = useCreateOrder();
 
     const {
         register,
@@ -99,9 +99,12 @@ export default function Checkout() {
                     </FormField>
 
                     {isError && (
-                        <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
-                            Não foi possível registrar o pedido. Tente novamente.
-                        </p>
+                        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                            <p>{(error as Error).message}</p>
+                            <Link to="/carrinho" className="mt-1 inline-block font-medium underline">
+                                Ajustar carrinho
+                            </Link>
+                        </div>
                     )}
 
                     <button
