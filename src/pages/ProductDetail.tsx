@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useProduct } from "../hooks/useProducts";
 import { formatBRL } from "../lib/format";
+import { useCart } from "../store/cartStore";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -30,7 +31,13 @@ export default function ProductDetail() {
           <p className={product.stock > 0 ? "text-green-700" : "text-red-600"}>
             {product.stock > 0 ? `${product.stock} em estoque` : "Sem estoque"}
           </p>
-          {/* O botão de carrinho entra no próximo passo */}
+          <button
+            disabled={product.stock === 0}
+            onClick={() => useCart.getState().add(product)}
+            className="rounded-lg bg-blue-700 px-6 py-3 font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+          >
+            Adicionar ao carrinho
+          </button>
         </div>
       </div>
     </div>
