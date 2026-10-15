@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import FormField from "../components/FormField";
+import PasswordInput from "../components/PasswordInput";
+import PasswordStrength from "../components/PasswordStrength";
+import { passwordSchema } from "../lib/passwordSchema";
 import { register as registerUser } from "../services/authService";
 import { useAuth } from "../store/authStore";
 
@@ -11,7 +14,7 @@ const schema = z
   .object({
     name: z.string().trim().min(3, "Informe seu nome completo"),
     email: z.string().trim().email("E-mail inválido"),
-    password: z.string().min(8, "A senha deve ter ao menos 8 caracteres"),
+    password: passwordSchema,
     confirm: z.string().min(1, "Confirme a senha"),
     terms: z.boolean().refine((v) => v, "É preciso aceitar os termos para continuar"),
   })
@@ -36,6 +39,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterData>({
     resolver: zodResolver(schema),
@@ -73,11 +77,12 @@ export default function Register() {
         </FormField>
 
         <FormField label="Senha" error={errors.password?.message}>
-          <input {...register("password")} type="password" autoComplete="new-password" className={inputClass} />
+          <PasswordInput {...register("password")} autoComplete="new-password" />
         </FormField>
+        <PasswordStrength value={watch("password")} />
 
         <FormField label="Confirmar senha" error={errors.confirm?.message}>
-          <input {...register("confirm")} type="password" autoComplete="new-password" className={inputClass} />
+          <PasswordInput {...register("confirm")} autoComplete="new-password" />
         </FormField>
 
         <div>
@@ -91,7 +96,9 @@ export default function Register() {
         </div>
 
         {error && (
-          <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{(error as Error).message}</p>
+          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            {(error as Error).message}
+          </p>
         )}
 
         <button
