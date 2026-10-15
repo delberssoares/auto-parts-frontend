@@ -7,6 +7,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Payment from "./pages/Payment";
+import MyOrders from "./pages/MyOrders";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="pagamento/:id" element={<Payment />} />
         <Route path="pedido/:id" element={<OrderSuccess />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="pedidos" element={<MyOrders />} />
       </Route>
     </Routes>
   );

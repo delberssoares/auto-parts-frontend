@@ -12,11 +12,18 @@ export default function Layout() {
                     </Link>
                     <nav className="flex items-center gap-6 text-sm font-medium">
                         <NavLink to="/" end className={({ isActive }) => (isActive ? "text-blue-700" : "hover:text-blue-700")}>
-                        
+
                             Peças
                         </NavLink>
                         <NavLink to="/carrinho" className={({ isActive }) => (isActive ? "text-blue-700" : "hover:text-blue-700")}>
                             Carrinho {count > 0 && <span className="ml-1 rounded-full bg-blue-700 px-2 py-0.5 text-xs text-white">{count}</span>}
+                        </NavLink>
+
+                        <NavLink
+                            to="/pedidos"
+                            className={({ isActive }) => (isActive ? "text-blue-700" : "hover:text-blue-700")}
+                        >
+                            Meus pedidos
                         </NavLink>
                     </nav>
                 </div>

@@ -44,3 +44,8 @@ export async function payOrder(id: string, method: PaymentMethod): Promise<Order
   localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
   return paid;
 }
+
+export async function getOrders(): Promise<Order[]> {
+  await delay(400);
+  return readOrders(); 
+}
