@@ -43,6 +43,10 @@ export default function Layout() {
 
             {user ? (
               <>
+                {user.role === "admin" && (
+                  <NavLink to="/admin/produtos" className={linkClass}>Admin</NavLink>
+                )}
+                
                 <NavLink to="/pedidos" className={linkClass}>
                   Meus pedidos <Counter value={pendingCount} color="bg-amber-500" />
                 </NavLink>
