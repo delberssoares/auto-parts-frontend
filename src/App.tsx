@@ -10,6 +10,9 @@ import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
 import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
+import AdminRoute from "./components/AdminRoute";
+import AdminProducts from "./pages/AdminProducts";
+import AdminProductForm from "./pages/AdminProductForm";
 
 export default function App() {
   return (
@@ -27,6 +30,12 @@ export default function App() {
           <Route path="pedidos" element={<MyOrders />} />
         </Route>
 
+        <Route path="admin" element={<AdminRoute />}>
+          <Route path="produtos" element={<AdminProducts />} />
+          <Route path="produtos/novo" element={<AdminProductForm />} />
+          <Route path="produtos/:id/editar" element={<AdminProductForm />} />
+        </Route>
+        
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
