@@ -8,7 +8,7 @@ export default function Layout() {
             <header className="sticky top-0 z-10 border-b bg-white">
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
                     <Link to="/" className="text-xl font-bold text-blue-700">
-                        🔧 Auto Parts
+                        🔧 DSS Auto Peças
                     </Link>
                     <nav className="flex items-center gap-6 text-sm font-medium">
                         <NavLink to="/" end className={({ isActive }) => (isActive ? "text-blue-700" : "hover:text-blue-700")}>
@@ -34,7 +34,7 @@ export default function Layout() {
             </main>
 
             <footer className="border-t bg-white py-6 text-center text-sm text-slate-500">
-                Projeto de portfólio · Auto Parts
+                Projeto de portfólio · DSS Auto Peças
             </footer>
         </div>
     );
