@@ -14,6 +14,8 @@ export interface Product {
   brand: string;
 }
 
+export type ProductInput = Omit<Product, "id">;
+
 export interface Customer {
   name: string;
   email: string;
@@ -33,7 +35,9 @@ export interface OrderItem {
 export interface User {
   name: string;
   email: string;
+  role: "admin" | "customer";
 }
+
 
 
 export type PaymentMethod = "pix" | "card";
