@@ -37,15 +37,27 @@ export default function Layout() {
 
           <nav className="flex flex-wrap items-center gap-5 text-sm font-medium">
             <NavLink to="/" end className={linkClass}>Peças</NavLink>
-            <NavLink to="/carrinho" className={linkClass}>
-              Carrinho <Counter value={cartCount} />
-            </NavLink>
+
 
             {user ? (
               <>
-                <NavLink to="/pedidos" className={linkClass}>
-                  Meus pedidos <Counter value={pendingCount} color="bg-amber-500" />
-                </NavLink>
+                {user.role === "admin" && (
+                  <NavLink to="/admin" className={linkClass}>Admin</NavLink>
+                )}
+
+                {user.role === "customer" && (
+                  <>
+                    <NavLink to="/carrinho" className={linkClass}>
+                      Carrinho <Counter value={cartCount} />
+                    </NavLink>
+
+                    <NavLink to="/pedidos" className={linkClass}>
+                      Meus pedidos <Counter value={pendingCount} color="bg-amber-500" />
+                    </NavLink>
+                  </>
+
+                )}
+
                 <span className="hidden text-slate-400 sm:inline">|</span>
                 <span className="hidden text-slate-500 sm:inline">Olá, {user.name}</span>
                 <button onClick={handleLogout} className="text-red-600 hover:underline">
@@ -53,7 +65,10 @@ export default function Layout() {
                 </button>
               </>
             ) : (
-              <NavLink to="/login" className={linkClass}>Entrar</NavLink>
+              <>
+                <NavLink to="/login" className={linkClass}>Entrar</NavLink>
+                <NavLink to="/cadastro" className={linkClass}>Criar conta</NavLink>
+              </>
             )}
           </nav>
         </div>

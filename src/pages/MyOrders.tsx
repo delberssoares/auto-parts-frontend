@@ -3,26 +3,39 @@ import { Link } from "react-router-dom";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import { useCancelOrder, useMyOrders } from "../hooks/useOrders";
 import { formatBRL, formatDate } from "../lib/format";
-import type { Order } from "../types";
+import { activeStatuses, canCustomerCancel } from "../lib/orderStatus";
+import type { Order, OrderStatus } from "../types";
 
-type Filter = "all" | Order["status"];
+type Filter = "all" | "pending" | "active" | "delivered" | "cancelled";
 
 const filters: { value: Filter; label: string }[] = [
   { value: "all", label: "Todos" },
   { value: "pending", label: "Pendentes" },
-  { value: "paid", label: "Pagos" },
+  { value: "active", label: "Em andamento" },
+  { value: "delivered", label: "Entregues" },
   { value: "cancelled", label: "Cancelados" },
 ];
+
+function matches(filter: Filter, status: OrderStatus) {
+  if (filter === "all") return true;
+  if (filter === "active") return activeStatuses.includes(status);
+  return status === filter;
+}
 
 export default function MyOrders() {
   const [filter, setFilter] = useState<Filter>("all");
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
   const cancel = useCancelOrder();
 
-  const visible = orders?.filter((o) => filter === "all" || o.status === filter);
+  const visible = orders?.filter((o) => matches(filter, o.status));
 
-  function handleCancel(id: string) {
-    if (window.confirm(`Cancelar o pedido ${id}?`)) cancel.mutate(id);
+  function handleCancel(order: Order) {
+    const message =
+      order.status === "paid"
+        ? `Cancelar o pedido ${order.id}? O valor de ${formatBRL(order.total)} será estornado.`
+        : `Cancelar o pedido ${order.id}?`;
+
+    if (window.confirm(message)) cancel.mutate(order.id);
   }
 
   return (
@@ -84,6 +97,7 @@ export default function MyOrders() {
           {visible.map((order) => {
             const itemsCount = order.items.reduce((acc, i) => acc + i.quantity, 0);
             const cancelling = cancel.isPending && cancel.variables === order.id;
+            const canCancel = canCustomerCancel(order.status);
 
             return (
               <li key={order.id} className="rounded-xl border bg-white p-5">
@@ -100,27 +114,45 @@ export default function MyOrders() {
                   {order.items.map((i) => i.name).join(", ")}
                 </p>
 
+                {order.status === "shipped" && order.shipping && (
+                  <p className="mt-2 text-sm text-purple-800">
+                    🚚 {order.shipping.carrier} · Rastreio:{" "}
+                    <span className="font-mono font-medium">{order.shipping.tracking_code}</span>
+                  </p>
+                )}
+
+                {order.refunded && (
+                  <p className="mt-2 text-sm font-medium text-green-700">
+                    Valor de {formatBRL(order.total)} estornado
+                  </p>
+                )}
+
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <p className={`text-lg font-bold ${order.status === "cancelled" ? "text-slate-400 line-through" : "text-blue-700"}`}>
+                  <p
+                    className={`text-lg font-bold ${
+                      order.status === "cancelled" ? "text-slate-400 line-through" : "text-blue-700"
+                    }`}
+                  >
                     {formatBRL(order.total)}
                   </p>
+
                   <div className="flex flex-wrap gap-3 text-sm font-medium">
+                    {canCancel && (
+                      <button
+                        onClick={() => handleCancel(order)}
+                        disabled={cancelling}
+                        className="rounded-lg border border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      >
+                        {cancelling ? "Cancelando..." : "Cancelar pedido"}
+                      </button>
+                    )}
                     {order.status === "pending" && (
-                      <>
-                        <button
-                          onClick={() => handleCancel(order.id)}
-                          disabled={cancelling}
-                          className="rounded-lg border border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                        >
-                          {cancelling ? "Cancelando..." : "Cancelar"}
-                        </button>
-                        <Link
-                          to={`/pagamento/${order.id}`}
-                          className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-                        >
-                          Pagar agora
-                        </Link>
-                      </>
+                      <Link
+                        to={`/pagamento/${order.id}`}
+                        className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+                      >
+                        Pagar agora
+                      </Link>
                     )}
                     <Link to={`/pedido/${order.id}`} className="rounded-lg border px-4 py-2 hover:bg-slate-50">
                       Ver detalhes
