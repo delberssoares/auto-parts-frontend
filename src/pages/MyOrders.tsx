@@ -3,23 +3,31 @@ import { Link } from "react-router-dom";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import { useCancelOrder, useMyOrders } from "../hooks/useOrders";
 import { formatBRL, formatDate } from "../lib/format";
-import type { Order } from "../types";
+import { activeStatuses, canCustomerCancel } from "../lib/orderStatus";
+import type { Order, OrderStatus } from "../types";
 
-type Filter = "all" | Order["status"];
+type Filter = "all" | "pending" | "active" | "delivered" | "cancelled";
 
 const filters: { value: Filter; label: string }[] = [
   { value: "all", label: "Todos" },
   { value: "pending", label: "Pendentes" },
-  { value: "paid", label: "Pagos" },
+  { value: "active", label: "Em andamento" },
+  { value: "delivered", label: "Entregues" },
   { value: "cancelled", label: "Cancelados" },
 ];
+
+function matches(filter: Filter, status: OrderStatus) {
+  if (filter === "all") return true;
+  if (filter === "active") return activeStatuses.includes(status);
+  return status === filter;
+}
 
 export default function MyOrders() {
   const [filter, setFilter] = useState<Filter>("all");
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
   const cancel = useCancelOrder();
 
-  const visible = orders?.filter((o) => filter === "all" || o.status === filter);
+  const visible = orders?.filter((o) => matches(filter, o.status));
 
   function handleCancel(order: Order) {
     const message =
@@ -89,7 +97,7 @@ export default function MyOrders() {
           {visible.map((order) => {
             const itemsCount = order.items.reduce((acc, i) => acc + i.quantity, 0);
             const cancelling = cancel.isPending && cancel.variables === order.id;
-            const canCancel = order.status === "pending" || order.status === "paid";
+            const canCancel = canCustomerCancel(order.status);
 
             return (
               <li key={order.id} className="rounded-xl border bg-white p-5">
@@ -105,6 +113,13 @@ export default function MyOrders() {
                   {itemsCount} {itemsCount === 1 ? "item" : "itens"}:{" "}
                   {order.items.map((i) => i.name).join(", ")}
                 </p>
+
+                {order.status === "shipped" && order.shipping && (
+                  <p className="mt-2 text-sm text-purple-800">
+                    🚚 {order.shipping.carrier} · Rastreio:{" "}
+                    <span className="font-mono font-medium">{order.shipping.tracking_code}</span>
+                  </p>
+                )}
 
                 {order.refunded && (
                   <p className="mt-2 text-sm font-medium text-green-700">
