@@ -15,6 +15,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
 import AdminOrders from "./pages/AdminOrders";
 import AdminOrderDetail from "./pages/AdminOrderDetail";
+import Register from "./pages/Register";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="produtos/:id" element={<ProductDetail />} />
         <Route path="carrinho" element={<Cart />} />
         <Route path="login" element={<Login />} />
+        <Route path="cadastro" element={<Register />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="checkout" element={<Checkout />} />

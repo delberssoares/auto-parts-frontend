@@ -65,7 +65,10 @@ export default function Layout() {
                 </button>
               </>
             ) : (
-              <NavLink to="/login" className={linkClass}>Entrar</NavLink>
+              <>
+                <NavLink to="/login" className={linkClass}>Entrar</NavLink>
+                <NavLink to="/cadastro" className={linkClass}>Criar conta</NavLink>
+              </>
             )}
           </nav>
         </div>

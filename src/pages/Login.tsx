@@ -1,4 +1,4 @@
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -44,12 +44,13 @@ export default function Login() {
     <div className="mx-auto max-w-md rounded-xl border bg-white p-8">
       <h1 className="mb-1 text-2xl font-bold">Entrar</h1>
       <p className="mb-6 text-sm text-slate-500">
-        Demo: use qualquer e-mail válido e a senha <strong>123456</strong>.
+        Não tem conta?{" "}
+        <Link to="/cadastro" state={location.state} className="text-blue-700 underline">
+          Criar conta
+        </Link>
         <br />
-        Admin: <strong>admin@autoparts.com</strong> / <strong>123456</strong>.
+        Demo admin: <strong>admin@autoparts.com</strong> / <strong>123456</strong>
       </p>
-
-
 
       <form onSubmit={handleSubmit((d) => mutate(d))} noValidate className="space-y-4">
         <FormField label="E-mail" error={errors.email?.message}>
