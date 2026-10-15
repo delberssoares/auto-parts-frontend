@@ -1,4 +1,4 @@
-import type { CreateOrderPayload, Order } from "../types";
+import type { CreateOrderPayload, Order, PaymentMethod } from "../types";
 
 const STORAGE_KEY = "auto-parts-orders";
 const delay = (ms = 800) => new Promise((r) => setTimeout(r, ms));
@@ -30,4 +30,17 @@ export async function getOrder(id: string): Promise<Order> {
   const order = readOrders().find((o) => o.id === id);
   if (!order) throw new Error("Pedido não encontrado");
   return order;
+}
+
+export async function payOrder(id: string, method: PaymentMethod): Promise<Order> {
+  await delay(1500);
+
+  const orders = readOrders();
+  const index = orders.findIndex((o) => o.id === id);
+  if (index === -1) throw new Error("Pedido não encontrado");
+
+  const paid: Order = { ...orders[index], status: "paid", payment_method: method };
+  orders[index] = paid;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+  return paid;
 }

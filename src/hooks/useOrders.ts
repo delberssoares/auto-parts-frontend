@@ -1,5 +1,6 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { createOrder, getOrder } from "../services/ordersService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createOrder, getOrder, payOrder } from "../services/ordersService";
+import type { PaymentMethod } from "../types";
 
 export function useCreateOrder() {
   return useMutation({ mutationFn: createOrder });
@@ -10,5 +11,13 @@ export function useOrder(id: string | undefined) {
     queryKey: ["order", id],
     queryFn: () => getOrder(id!),
     enabled: !!id,
+  });
+}
+
+export function usePayOrder(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (method: PaymentMethod) => payOrder(id, method),
+    onSuccess: (order) => queryClient.setQueryData(["order", id], order),
   });
 }

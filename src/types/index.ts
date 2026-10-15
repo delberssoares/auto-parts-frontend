@@ -30,12 +30,15 @@ export interface OrderItem {
   quantity: number;
 }
 
+export type PaymentMethod = "pix" | "card";
+
 export interface Order {
   id: string;
   customer: Customer;
   items: OrderItem[];
   total: number;
-  status: "pending";
+  status: "pending" | "paid";
+  payment_method?: PaymentMethod;
   created_at: string;
 }
 
