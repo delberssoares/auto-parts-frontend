@@ -50,6 +50,7 @@ export interface Order {
   total: number;
   status: "pending" | "paid" | "cancelled";
   payment_method?: PaymentMethod;
+  refunded?: boolean;
   created_at: string;
 }
 

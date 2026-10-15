@@ -63,11 +63,18 @@ export async function cancelOrder(id: string): Promise<Order> {
   const orders = readOrders();
   const index = orders.findIndex((o) => o.id === id);
   if (index === -1) throw new Error("Pedido não encontrado");
-  if (orders[index].status !== "pending") {
-    throw new Error("Apenas pedidos pendentes podem ser cancelados");
+
+  const current = orders[index];
+  if (current.status === "cancelled") {
+    throw new Error("Este pedido já foi cancelado");
   }
 
-  const cancelled: Order = { ...orders[index], status: "cancelled" };
+  const cancelled: Order = {
+    ...current,
+    status: "cancelled",
+    // se já estava pago, o valor precisa ser devolvido ao cliente
+    refunded: current.status === "paid",
+  };
   orders[index] = cancelled;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
 
