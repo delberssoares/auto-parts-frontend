@@ -51,7 +51,9 @@ export function usePayOrder(id: string) {
 export function useCancelOrder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: cancelOrder,
+
+    mutationFn: (id: string) => cancelOrder(id),
+
     onSuccess: (order) => {
       queryClient.setQueryData(["order", order.id], order);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
