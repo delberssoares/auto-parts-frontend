@@ -1,3 +1,4 @@
+import { releaseStock, reserveStock } from "./productsService";
 import type { CreateOrderPayload, Order, PaymentMethod } from "../types";
 
 const STORAGE_KEY = "auto-parts-orders";
@@ -13,6 +14,9 @@ function readOrders(): Order[] {
 
 export async function createOrder(payload: CreateOrderPayload): Promise<Order> {
   await delay();
+
+  // Lança erro se não houver estoque; nesse caso o pedido não é criado
+  reserveStock(payload.items);
 
   const order: Order = {
     id: Math.random().toString(36).slice(2, 8).toUpperCase(),
@@ -32,22 +36,25 @@ export async function getOrder(id: string): Promise<Order> {
   return order;
 }
 
+export async function getOrders(email: string): Promise<Order[]> {
+  await delay(400);
+  return readOrders().filter((o) => o.user_email === email);
+}
+
 export async function payOrder(id: string, method: PaymentMethod): Promise<Order> {
   await delay(1500);
 
   const orders = readOrders();
   const index = orders.findIndex((o) => o.id === id);
   if (index === -1) throw new Error("Pedido não encontrado");
+  if (orders[index].status !== "pending") {
+    throw new Error("Este pedido não está aguardando pagamento");
+  }
 
   const paid: Order = { ...orders[index], status: "paid", payment_method: method };
   orders[index] = paid;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
   return paid;
-}
-
-export async function getOrders(email: string): Promise<Order[]> {
-  await delay(400);
-  return readOrders().filter((o) => o.user_email === email);
 }
 
 export async function cancelOrder(id: string): Promise<Order> {
@@ -56,12 +63,21 @@ export async function cancelOrder(id: string): Promise<Order> {
   const orders = readOrders();
   const index = orders.findIndex((o) => o.id === id);
   if (index === -1) throw new Error("Pedido não encontrado");
-  if (orders[index].status !== "pending") {
-    throw new Error("Apenas pedidos pendentes podem ser cancelados");
+
+  const current = orders[index];
+  if (current.status === "cancelled") {
+    throw new Error("Este pedido já foi cancelado");
   }
 
-  const cancelled: Order = { ...orders[index], status: "cancelled" };
+  const cancelled: Order = {
+    ...current,
+    status: "cancelled",
+    // se já estava pago, o valor precisa ser devolvido ao cliente
+    refunded: current.status === "paid",
+  };
   orders[index] = cancelled;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+
+  releaseStock(cancelled.items);
   return cancelled;
 }

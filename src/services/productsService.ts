@@ -103,3 +103,46 @@ export async function deleteProduct(id: number): Promise<void> {
   if (!list.some((p) => p.id === id)) throw new Error("Produto não encontrado");
   writeProducts(list.filter((p) => p.id !== id));
 }
+
+export interface StockItem {
+  product_id: number;
+  quantity: number;
+}
+
+// Valida tudo antes de alterar: se algum item falhar, nenhum estoque é baixado
+export function reserveStock(items: StockItem[]): void {
+  const list = readProducts();
+
+  for (const item of items) {
+    const product = list.find((p) => p.id === item.product_id);
+    if (!product) {
+      throw new Error("Um dos produtos do carrinho não está mais disponível.");
+    }
+    if (product.stock < item.quantity) {
+      throw new Error(
+        product.stock === 0
+          ? `"${product.name}" está sem estoque.`
+          : `Estoque insuficiente para "${product.name}" (disponível: ${product.stock}).`
+      );
+    }
+  }
+
+  writeProducts(
+    list.map((p) => {
+      const item = items.find((i) => i.product_id === p.id);
+      return item ? { ...p, stock: p.stock - item.quantity } : p;
+    })
+  );
+}
+
+// Produtos que foram excluídos no meio tempo são simplesmente ignorados
+export function releaseStock(items: StockItem[]): void {
+  const list = readProducts();
+
+  writeProducts(
+    list.map((p) => {
+      const item = items.find((i) => i.product_id === p.id);
+      return item ? { ...p, stock: p.stock + item.quantity } : p;
+    })
+  );
+}

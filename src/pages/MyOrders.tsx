@@ -21,8 +21,13 @@ export default function MyOrders() {
 
   const visible = orders?.filter((o) => filter === "all" || o.status === filter);
 
-  function handleCancel(id: string) {
-    if (window.confirm(`Cancelar o pedido ${id}?`)) cancel.mutate(id);
+  function handleCancel(order: Order) {
+    const message =
+      order.status === "paid"
+        ? `Cancelar o pedido ${order.id}? O valor de ${formatBRL(order.total)} será estornado.`
+        : `Cancelar o pedido ${order.id}?`;
+
+    if (window.confirm(message)) cancel.mutate(order.id);
   }
 
   return (
@@ -84,6 +89,7 @@ export default function MyOrders() {
           {visible.map((order) => {
             const itemsCount = order.items.reduce((acc, i) => acc + i.quantity, 0);
             const cancelling = cancel.isPending && cancel.variables === order.id;
+            const canCancel = order.status === "pending" || order.status === "paid";
 
             return (
               <li key={order.id} className="rounded-xl border bg-white p-5">
@@ -100,27 +106,38 @@ export default function MyOrders() {
                   {order.items.map((i) => i.name).join(", ")}
                 </p>
 
+                {order.refunded && (
+                  <p className="mt-2 text-sm font-medium text-green-700">
+                    Valor de {formatBRL(order.total)} estornado
+                  </p>
+                )}
+
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <p className={`text-lg font-bold ${order.status === "cancelled" ? "text-slate-400 line-through" : "text-blue-700"}`}>
+                  <p
+                    className={`text-lg font-bold ${
+                      order.status === "cancelled" ? "text-slate-400 line-through" : "text-blue-700"
+                    }`}
+                  >
                     {formatBRL(order.total)}
                   </p>
+
                   <div className="flex flex-wrap gap-3 text-sm font-medium">
+                    {canCancel && (
+                      <button
+                        onClick={() => handleCancel(order)}
+                        disabled={cancelling}
+                        className="rounded-lg border border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      >
+                        {cancelling ? "Cancelando..." : "Cancelar pedido"}
+                      </button>
+                    )}
                     {order.status === "pending" && (
-                      <>
-                        <button
-                          onClick={() => handleCancel(order.id)}
-                          disabled={cancelling}
-                          className="rounded-lg border border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                        >
-                          {cancelling ? "Cancelando..." : "Cancelar"}
-                        </button>
-                        <Link
-                          to={`/pagamento/${order.id}`}
-                          className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-                        >
-                          Pagar agora
-                        </Link>
-                      </>
+                      <Link
+                        to={`/pagamento/${order.id}`}
+                        className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+                      >
+                        Pagar agora
+                      </Link>
                     )}
                     <Link to={`/pedido/${order.id}`} className="rounded-lg border px-4 py-2 hover:bg-slate-50">
                       Ver detalhes
