@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Products from "./pages/Products";
@@ -13,6 +13,8 @@ import NotFound from "./pages/NotFound";
 import AdminRoute from "./components/AdminRoute";
 import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
+import AdminOrders from "./pages/AdminOrders";
+import AdminOrderDetail from "./pages/AdminOrderDetail";
 
 export default function App() {
   return (
@@ -31,11 +33,14 @@ export default function App() {
         </Route>
 
         <Route path="admin" element={<AdminRoute />}>
+          <Route index element={<Navigate to="pedidos" replace />} />
+          <Route path="pedidos" element={<AdminOrders />} />
+          <Route path="pedidos/:id" element={<AdminOrderDetail />} />
           <Route path="produtos" element={<AdminProducts />} />
           <Route path="produtos/novo" element={<AdminProductForm />} />
           <Route path="produtos/:id/editar" element={<AdminProductForm />} />
         </Route>
-        
+
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
