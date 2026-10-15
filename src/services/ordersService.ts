@@ -45,7 +45,23 @@ export async function payOrder(id: string, method: PaymentMethod): Promise<Order
   return paid;
 }
 
-export async function getOrders(): Promise<Order[]> {
+export async function getOrders(email: string): Promise<Order[]> {
   await delay(400);
-  return readOrders(); 
+  return readOrders().filter((o) => o.user_email === email);
+}
+
+export async function cancelOrder(id: string): Promise<Order> {
+  await delay(600);
+
+  const orders = readOrders();
+  const index = orders.findIndex((o) => o.id === id);
+  if (index === -1) throw new Error("Pedido não encontrado");
+  if (orders[index].status !== "pending") {
+    throw new Error("Apenas pedidos pendentes podem ser cancelados");
+  }
+
+  const cancelled: Order = { ...orders[index], status: "cancelled" };
+  orders[index] = cancelled;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+  return cancelled;
 }

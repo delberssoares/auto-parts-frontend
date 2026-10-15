@@ -7,6 +7,8 @@ import { formatBRL } from "../lib/format";
 import { useCreateOrder } from "../hooks/useOrders";
 import { selectTotal, useCart } from "../store/cartStore";
 import { useRef } from "react";
+import { useAuth } from "../store/authStore";
+
 
 const inputClass =
     "w-full rounded-lg border bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500";
@@ -17,6 +19,8 @@ export default function Checkout() {
     const items = useCart((s) => s.items);
     const total = useCart(selectTotal);
     const clear = useCart((s) => s.clear);
+    const user = useAuth((s) => s.user)!;
+
 
     const { mutate, isPending, isError } = useCreateOrder();
 
@@ -26,7 +30,7 @@ export default function Checkout() {
         formState: { errors },
     } = useForm<CheckoutFormData>({
         resolver: zodResolver(checkoutSchema),
-        defaultValues: { name: "", email: "", phone: "", cep: "", address: "", city: "" },
+        defaultValues: { name: user.name, email: user.email, phone: "", cep: "", address: "", city: "" },
     });
 
     if (items.length === 0 && !orderPlaced.current) {
@@ -36,6 +40,7 @@ export default function Checkout() {
     function onSubmit(customer: CheckoutFormData) {
         mutate(
             {
+                user_email: user.email,
                 customer,
                 total,
                 items: items.map(({ product, quantity }) => ({

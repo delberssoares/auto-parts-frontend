@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import OrderStatusBadge from "../components/OrderStatusBadge";
-import { useMyOrders } from "../hooks/useOrders";
+import { useCancelOrder, useMyOrders } from "../hooks/useOrders";
 import { formatBRL, formatDate } from "../lib/format";
 import type { Order } from "../types";
 
@@ -11,19 +11,25 @@ const filters: { value: Filter; label: string }[] = [
   { value: "all", label: "Todos" },
   { value: "pending", label: "Pendentes" },
   { value: "paid", label: "Pagos" },
+  { value: "cancelled", label: "Cancelados" },
 ];
 
 export default function MyOrders() {
   const [filter, setFilter] = useState<Filter>("all");
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
+  const cancel = useCancelOrder();
 
   const visible = orders?.filter((o) => filter === "all" || o.status === filter);
+
+  function handleCancel(id: string) {
+    if (window.confirm(`Cancelar o pedido ${id}?`)) cancel.mutate(id);
+  }
 
   return (
     <section>
       <h1 className="mb-6 text-2xl font-bold">Meus pedidos</h1>
 
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex flex-wrap gap-2">
         {filters.map((f) => (
           <button
             key={f.value}
@@ -38,6 +44,12 @@ export default function MyOrders() {
           </button>
         ))}
       </div>
+
+      {cancel.isError && (
+        <p className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          {(cancel.error as Error).message}
+        </p>
+      )}
 
       {isLoading && (
         <div className="space-y-4">
@@ -71,6 +83,8 @@ export default function MyOrders() {
         <ul className="space-y-4">
           {visible.map((order) => {
             const itemsCount = order.items.reduce((acc, i) => acc + i.quantity, 0);
+            const cancelling = cancel.isPending && cancel.variables === order.id;
+
             return (
               <li key={order.id} className="rounded-xl border bg-white p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -87,20 +101,28 @@ export default function MyOrders() {
                 </p>
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-lg font-bold text-blue-700">{formatBRL(order.total)}</p>
-                  <div className="flex gap-3 text-sm font-medium">
+                  <p className={`text-lg font-bold ${order.status === "cancelled" ? "text-slate-400 line-through" : "text-blue-700"}`}>
+                    {formatBRL(order.total)}
+                  </p>
+                  <div className="flex flex-wrap gap-3 text-sm font-medium">
                     {order.status === "pending" && (
-                      <Link
-                        to={`/pagamento/${order.id}`}
-                        className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-                      >
-                        Pagar agora
-                      </Link>
+                      <>
+                        <button
+                          onClick={() => handleCancel(order.id)}
+                          disabled={cancelling}
+                          className="rounded-lg border border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                        >
+                          {cancelling ? "Cancelando..." : "Cancelar"}
+                        </button>
+                        <Link
+                          to={`/pagamento/${order.id}`}
+                          className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+                        >
+                          Pagar agora
+                        </Link>
+                      </>
                     )}
-                    <Link
-                      to={`/pedido/${order.id}`}
-                      className="rounded-lg border px-4 py-2 hover:bg-slate-50"
-                    >
+                    <Link to={`/pedido/${order.id}`} className="rounded-lg border px-4 py-2 hover:bg-slate-50">
                       Ver detalhes
                     </Link>
                   </div>

@@ -30,19 +30,27 @@ export interface OrderItem {
   quantity: number;
 }
 
+export interface User {
+  name: string;
+  email: string;
+}
+
+
 export type PaymentMethod = "pix" | "card";
 
 export interface Order {
   id: string;
+  user_email: string;
   customer: Customer;
   items: OrderItem[];
   total: number;
-  status: "pending" | "paid";
+  status: "pending" | "paid" | "cancelled";
   payment_method?: PaymentMethod;
   created_at: string;
 }
 
 export interface CreateOrderPayload {
+  user_email: string;
   customer: Customer;
   items: OrderItem[];
   total: number;

@@ -30,6 +30,8 @@ export default function Payment() {
 
   if (order.status === "paid") return <Navigate to={`/pedido/${order.id}`} replace />;
 
+  if (order.status !== "pending") return <Navigate to={`/pedido/${order.id}`} replace />;
+
   function handlePay() {
     mutate(method, {
       onSuccess: () => navigate(`/pedido/${id}`, { replace: true }),

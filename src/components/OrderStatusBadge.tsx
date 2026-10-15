@@ -3,11 +3,13 @@ import type { Order } from "../types";
 const styles: Record<Order["status"], string> = {
   pending: "bg-amber-100 text-amber-800",
   paid: "bg-green-100 text-green-800",
+  cancelled: "bg-slate-200 text-slate-600",
 };
 
 const labels: Record<Order["status"], string> = {
   pending: "Aguardando pagamento",
   paid: "Pago",
+  cancelled: "Cancelado",
 };
 
 export default function OrderStatusBadge({ status }: { status: Order["status"] }) {
