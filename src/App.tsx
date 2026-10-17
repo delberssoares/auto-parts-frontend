@@ -20,6 +20,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DevMailbox from "./pages/DevMailbox";
 import { useSessionSync } from "./hooks/useSessionSync";
+import Account from "./pages/Account";
 
 export default function App() {
   useSessionSync();
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="esqueci-senha" element={<ForgotPassword />} />
         <Route path="redefinir-senha" element={<ResetPassword />} />
         <Route path="dev/emails" element={<DevMailbox />} />
+        <Route path="conta" element={<Account />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="checkout" element={<Checkout />} />
