@@ -26,7 +26,8 @@ export interface Customer {
 }
 
 export interface OrderItem {
-  product_id: number;
+  id: number;
+  product_id: number | null; // null se o produto foi excluído depois da compra
   name: string;
   price: number;
   quantity: number;
@@ -42,10 +43,19 @@ export interface User {
 export type PaymentMethod = "pix" | "card";
 
 export interface CreateOrderPayload {
-  user_email: string;
   customer: Customer;
-  items: OrderItem[];
+  items: { product_id: number; quantity: number }[];
+}
+
+export interface Page<T> {
+  items: T[];
   total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface OrderSummary {
+  counts: Record<OrderStatus, number>;
 }
 
 export type OrderStatus =
@@ -62,29 +72,32 @@ export interface Shipping {
   carrier: string;
   tracking_code: string;
   shipped_at: string;
-  estimated_delivery?: string; // formato YYYY-MM-DD
-  delivered_at?: string;
+  estimated_delivery: string | null; // YYYY-MM-DD
+  delivered_at: string | null;
 }
 
-export type ShippingInput = Pick<Shipping, "carrier" | "tracking_code" | "estimated_delivery">;
+export type ShippingInput = {
+  carrier: string;
+  tracking_code: string;
+  estimated_delivery?: string;
+};
 
 export interface StatusEvent {
   status: OrderStatus;
   at: string;
   by: Actor;
-  note?: string;
+  note: string | null;
 }
 
 export interface Order {
   id: string;
-  user_email: string;
+  status: OrderStatus;
+  total: number;
+  payment_method: PaymentMethod | null;
+  refunded: boolean;
   customer: Customer;
   items: OrderItem[];
-  total: number;
-  status: OrderStatus;
-  payment_method?: PaymentMethod;
-  refunded?: boolean;
-  shipping?: Shipping;
+  shipping: Shipping | null;
   history: StatusEvent[];
   created_at: string;
 }
