@@ -1,4 +1,3 @@
-import { releaseStock, reserveStock } from "./productsService";
 import { canCustomerCancel, canTransition, statusMeta } from "../lib/orderStatus";
 import type {
   Actor,
@@ -72,7 +71,6 @@ export async function createOrder(payload: CreateOrderPayload): Promise<Order> {
   await delay();
 
   // Lança erro se não houver estoque; nesse caso o pedido não é criado
-  reserveStock(payload.items);
 
   const now = new Date().toISOString();
   const order: Order = {
@@ -122,7 +120,6 @@ export async function cancelOrder(id: string, by: Actor = "customer"): Promise<O
     );
   });
 
-  releaseStock(cancelled.items);
   return cancelled;
 }
 
