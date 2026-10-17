@@ -33,6 +33,7 @@ export interface OrderItem {
 }
 
 export interface User {
+  id: number;
   name: string;
   email: string;
   role: "admin" | "customer";
