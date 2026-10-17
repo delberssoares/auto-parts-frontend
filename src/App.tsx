@@ -19,8 +19,10 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DevMailbox from "./pages/DevMailbox";
+import { useSessionSync } from "./hooks/useSessionSync";
 
 export default function App() {
+  useSessionSync();
   return (
     <Routes>
       <Route element={<Layout />}>
