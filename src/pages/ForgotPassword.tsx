@@ -6,8 +6,8 @@ import { z } from "zod";
 import FormField from "../components/FormField";
 import { useCountdown } from "../hooks/useCountdown";
 import { useForgotPassword } from "../hooks/usePasswordReset";
-import { DEMO_MODE } from "../lib/env";
-import { RESET_COOLDOWN_SEC, RESET_TOKEN_TTL_MIN, RateLimitError } from "../services/authService";
+import { ApiError } from "../lib/api";
+import { RESET_COOLDOWN_SEC, RESET_TOKEN_TTL_MIN } from "../services/authService";
 
 const schema = z.object({ email: z.string().trim().email("Informe um e-mail válido") });
 type FormData = z.infer<typeof schema>;
@@ -33,7 +33,7 @@ export default function ForgotPassword() {
         setRemaining(RESET_COOLDOWN_SEC);
       },
       onError: (e) => {
-        if (e instanceof RateLimitError) setRemaining(e.retryAfter);
+        if (e instanceof ApiError && e.status === 429 && e.retryAfter) setRemaining(e.retryAfter);
       },
     });
   }
@@ -67,14 +67,6 @@ export default function ForgotPassword() {
           {isPending ? "Reenviando..." : remaining > 0 ? `Reenviar link em ${remaining}s` : "Reenviar link"}
         </button>
 
-        {DEMO_MODE && (
-          <Link
-            to="/dev/emails"
-            className="block rounded-lg bg-amber-50 p-3 text-center text-sm text-amber-800 hover:bg-amber-100"
-          >
-            Demonstração: abrir a caixa de e-mail simulada
-          </Link>
-        )}
 
         <p className="text-center text-sm">
           <Link to="/login" className="text-blue-700 underline">Voltar para o login</Link>

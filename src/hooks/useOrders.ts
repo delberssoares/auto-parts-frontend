@@ -4,11 +4,11 @@ import { useAuth } from "../store/authStore";
 import type { PaymentMethod } from "../types";
 
 export function useMyOrders() {
-  const email = useAuth((s) => s.user?.email);
+  const userId = useAuth((s) => s.user?.id);
   return useQuery({
-    queryKey: ["orders", email],
-    queryFn: () => getOrders(email!),
-    enabled: !!email,
+    queryKey: ["orders", "mine", userId],
+    queryFn: getOrders,
+    enabled: !!userId,
   });
 }
 
@@ -17,14 +17,23 @@ export function usePendingOrdersCount() {
   return data?.filter((o) => o.status === "pending").length ?? 0;
 }
 
+// Criar e cancelar mexem no estoque, então atualizam os produtos também
+function useRefreshStock() {
+  const queryClient = useQueryClient();
+  return () => {
+    queryClient.invalidateQueries({ queryKey: ["products"] });
+    queryClient.invalidateQueries({ queryKey: ["product"] });
+  };
+}
+
 export function useCreateOrder() {
   const queryClient = useQueryClient();
+  const refreshStock = useRefreshStock();
   return useMutation({
     mutationFn: createOrder,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["product"] });
+      refreshStock();
     },
   });
 }
@@ -50,15 +59,13 @@ export function usePayOrder(id: string) {
 
 export function useCancelOrder() {
   const queryClient = useQueryClient();
+  const refreshStock = useRefreshStock();
   return useMutation({
-
-    mutationFn: (id: string) => cancelOrder(id),
-
+    mutationFn: cancelOrder,
     onSuccess: (order) => {
       queryClient.setQueryData(["order", order.id], order);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["product"] });
+      refreshStock();
     },
   });
 }

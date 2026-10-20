@@ -24,7 +24,8 @@ export default function Login() {
   const from = state?.from ?? "/";
 
   const user = useAuth((s) => s.user);
-  const setUser = useAuth((s) => s.setUser);
+  const setSession = useAuth((s) => s.setSession);
+
 
   const {
     register,
@@ -34,8 +35,8 @@ export default function Login() {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: ({ email, password }: LoginData) => login(email, password),
-    onSuccess: (loggedUser) => {
-      setUser(loggedUser);
+    onSuccess: ({ token, user }) => {
+      setSession(token, user);
       navigate(from, { replace: true });
     },
   });
@@ -51,7 +52,6 @@ export default function Login() {
           Criar conta
         </Link>
         <br />
-        Demo admin: <strong>admin@autoparts.com</strong> / <strong>123456</strong>
       </p>
 
       {state?.notice && (

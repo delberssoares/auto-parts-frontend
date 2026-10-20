@@ -40,13 +40,9 @@ export default function Checkout() {
     function onSubmit(customer: CheckoutFormData) {
         mutate(
             {
-                user_email: user.email,
                 customer,
-                total,
                 items: items.map(({ product, quantity }) => ({
                     product_id: product.id,
-                    name: product.name,
-                    price: product.price,
                     quantity,
                 })),
             },

@@ -1,21 +1,28 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  cancelOrder,
+  adminCancelOrder,
   deliverOrder,
-  getAllOrders,
+  getAdminOrders,
+  getOrderSummary,
   shipOrder,
   startProcessing,
+  type AdminOrderFilters,
 } from "../services/ordersService";
 import type { Order, ShippingInput } from "../types";
 
-export function useAllOrders() {
+export function useAdminOrders(filters: AdminOrderFilters) {
   return useQuery({
-    queryKey: ["orders", "admin"],
-    queryFn: getAllOrders,
+    queryKey: ["orders", "admin", filters],
+    queryFn: () => getAdminOrders(filters),
+    placeholderData: keepPreviousData, // evita "piscar" ao trocar de página
   });
 }
 
-// Toda ação atualiza o pedido em cache e invalida as listas
+export function useOrderSummary() {
+  return useQuery({ queryKey: ["orders", "summary"], queryFn: getOrderSummary });
+}
+
+// Toda ação atualiza o pedido em cache e invalida lista e contadores
 function useOrderAction<TVars>(
   mutationFn: (vars: TVars) => Promise<Order>,
   refreshProducts = false
@@ -42,6 +49,6 @@ export const useShipOrder = () =>
 
 export const useDeliverOrder = () => useOrderAction((id: string) => deliverOrder(id));
 
-// Cancelar devolve o estoque, então também atualiza os produtos
+// Cancelar devolve o estoque
 export const useAdminCancelOrder = () =>
-  useOrderAction((id: string) => cancelOrder(id, "admin"), true);
+  useOrderAction((id: string) => adminCancelOrder(id), true);

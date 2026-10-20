@@ -59,7 +59,9 @@ export default function Layout() {
                 )}
 
                 <span className="hidden text-slate-400 sm:inline">|</span>
-                <span className="hidden text-slate-500 sm:inline">Olá, {user.name}</span>
+                <Link to="/conta" className="hidden text-slate-500 hover:text-blue-700 sm:inline">
+                  Olá, {user.name}
+                </Link>
                 <button onClick={handleLogout} className="text-red-600 hover:underline">
                   Sair
                 </button>

@@ -34,7 +34,7 @@ export default function Register() {
   const from = (location.state as { from?: string } | null)?.from ?? "/";
 
   const user = useAuth((s) => s.user);
-  const setUser = useAuth((s) => s.setUser);
+  const setSession = useAuth((s) => s.setSession);
 
   const {
     register,
@@ -49,8 +49,8 @@ export default function Register() {
   const { mutate, isPending, error } = useMutation({
     mutationFn: ({ name, email, password }: RegisterData) =>
       registerUser({ name, email, password }),
-    onSuccess: (created) => {
-      setUser(created); // já entra logado
+    onSuccess: ({ token, user }) => {
+      setSession(token, user); // já entra logado
       navigate(from, { replace: true });
     },
   });
