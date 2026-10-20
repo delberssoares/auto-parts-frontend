@@ -10,3 +10,8 @@ export const formatDate = (iso: string) =>
         hour: "2-digit",
         minute: "2-digit",
     });
+
+export const formatDay = (day: string) => {
+    const [year, month, d] = day.split("-");
+    return `${d}/${month}/${year}`;
+};
