@@ -1,4 +1,4 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +22,7 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 function InvalidLink() {
+
   return (
     <div className="mx-auto max-w-md space-y-4 rounded-xl border bg-white p-8 text-center">
       <div className="text-4xl">⚠️</div>
@@ -44,6 +45,8 @@ export default function ResetPassword() {
   const token = params.get("token");
   const navigate = useNavigate();
   const logout = useAuth((s) => s.logout);
+  const location = useLocation();
+  const isDemo = (location.state as { demo?: boolean } | null)?.demo;
 
   const check = useResetTokenCheck(token);
   const { mutate, isPending, error } = useResetPassword();
@@ -79,6 +82,11 @@ export default function ResetPassword() {
   return (
     <div className="mx-auto max-w-md rounded-xl border bg-white p-8">
       <h1 className="mb-1 text-2xl font-bold">Criar nova senha</h1>
+      {isDemo && (
+        <p className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+          Conta de demonstração: como não enviamos e-mail, você veio direto para criar a nova senha.
+        </p>
+      )}
       <p className="mb-6 text-sm text-slate-500">
         Conta: <strong>{check.data?.email}</strong>
       </p>
