@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +19,7 @@ export default function ForgotPassword() {
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [remaining, setRemaining] = useCountdown();
   const { mutate, isPending, error } = useForgotPassword();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,7 +29,14 @@ export default function ForgotPassword() {
 
   function send(email: string) {
     mutate(email, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        // Conta de demonstração: não há e-mail, vai direto para criar a nova senha
+        if (data.demo_reset_token) {
+          navigate(`/redefinir-senha?token=${encodeURIComponent(data.demo_reset_token)}`, {
+            state: { demo: true },
+          });
+          return;
+        }
         setSentTo(email);
         setRemaining(RESET_COOLDOWN_SEC);
       },

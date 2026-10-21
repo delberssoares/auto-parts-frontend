@@ -22,6 +22,11 @@ export interface RegisterInput {
   password: string;
 }
 
+export interface ForgotPasswordResponse {
+  message: string;
+  demo_reset_token?: string; // só vem em contas de demonstração
+}
+
 const toSession = (data: TokenResponse): Session => ({ token: data.access_token, user: data.user });
 
 export async function register(input: RegisterInput): Promise<Session> {
@@ -39,9 +44,12 @@ export const getMe = () => api<User>("/auth/me");
 export const changePassword = (current_password: string, new_password: string) =>
   api<void>("/auth/change-password", { method: "POST", body: { current_password, new_password } });
 
-export async function requestPasswordReset(email: string): Promise<void> {
-  await api("/auth/forgot-password", { method: "POST", body: { email }, auth: false });
-}
+export const requestPasswordReset = (email: string) =>
+  api<ForgotPasswordResponse>("/auth/forgot-password", {
+    method: "POST",
+    body: { email },
+    auth: false,
+  });
 
 export const validateResetToken = (token: string) =>
   api<{ email: string }>("/auth/reset-password/validate", { method: "POST", body: { token }, auth: false });
