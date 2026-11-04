@@ -68,8 +68,7 @@ export const EngineIcon = (props: IconProps) => (
 
 export const SuspensionIcon = (props: IconProps) => (
   <Icon {...props}>
-    <path d="M8 3h8M12 3v3M12 18v3M8 21h8" />
-    <path d="M7 8l10 2M7 12l10 2M7 16l10 2" />
+    <path d="M12 2v3l4 1.2-8 2.4 8 2.4-8 2.4 8 2.4-4 1.2v5" />
   </Icon>
 );
 

@@ -32,40 +32,42 @@ export default function ProductCard({ product, categoryName }: Props) {
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         <p className="text-sm text-muted">{product.brand}</p>
-        <h2 className="mt-0.5 line-clamp-2 min-h-[2.75rem] font-medium leading-snug">
+        <h2 className="mt-0.5 line-clamp-2 font-medium leading-snug">
           <Link to={`/produtos/${product.id}`} className="hover:underline">
             {product.name}
           </Link>
         </h2>
 
-        <p className="mt-2 flex items-center gap-2 text-sm text-muted">
-          <span className={`h-2 w-2 rounded-full ${status.dot}`} aria-hidden="true" />
-          {status.label}
-        </p>
-
-        <div className="mt-auto flex items-end justify-between gap-2 pt-4">
-          <p className="font-display text-2xl font-bold leading-none sm:text-[1.7rem]">
-            {formatBRL(product.price)}
+        <div className="mt-auto pt-3">
+          <p className="flex items-center gap-2 text-sm text-muted">
+            <span className={`h-2 w-2 rounded-full ${status.dot}`} aria-hidden="true" />
+            {status.label}
           </p>
 
-          <button
-            type="button"
-            onClick={() => add(product)}
-            disabled={out || atLimit}
-            aria-label={
-              inCart > 0
-                ? `Adicionar mais uma unidade de ${product.name} (${inCart} no carrinho)`
-                : `Adicionar ${product.name} ao carrinho`
-            }
-            className="relative grid h-11 w-11 shrink-0 place-items-center rounded-md bg-brass text-garage-950 transition-colors hover:bg-brass-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
-          >
-            <CartIcon className="h-5 w-5" />
-            {inCart > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-garage-900 px-1 text-xs font-bold text-white">
-                {inCart}
-              </span>
-            )}
-          </button>
+          <div className="mt-2 flex items-end justify-between gap-2">
+            <p className="font-display text-2xl font-bold leading-none sm:text-[1.7rem]">
+              {formatBRL(product.price)}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => add(product)}
+              disabled={out || atLimit}
+              aria-label={
+                inCart > 0
+                  ? `Adicionar mais uma unidade de ${product.name} (${inCart} no carrinho)`
+                  : `Adicionar ${product.name} ao carrinho`
+              }
+              className="relative grid h-11 w-11 shrink-0 place-items-center rounded-md bg-brass text-garage-950 transition-colors hover:bg-brass-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
+            >
+              <CartIcon className="h-5 w-5" />
+              {inCart > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-garage-900 px-1 text-xs font-bold text-white">
+                  {inCart}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </article>
