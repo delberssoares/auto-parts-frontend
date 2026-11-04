@@ -3,7 +3,7 @@ import type { OrderStatus } from "../types";
 
 const styles: Record<OrderStatus, string> = {
   pending: "bg-amber-100 text-amber-800",
-  paid: "bg-blue-100 text-blue-800",
+  paid: "bg-sky-100 text-sky-800",
   processing: "bg-indigo-100 text-indigo-800",
   shipped: "bg-purple-100 text-purple-800",
   delivered: "bg-green-100 text-green-800",

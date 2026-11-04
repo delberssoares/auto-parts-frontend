@@ -1,1 +1,90 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Barlow", ui-sans-serif, system-ui, sans-serif;
+
+  /* Verde corrida: identidade da marca */
+  --color-garage-50: #eef6f3;
+  --color-garage-100: #d6ebe3;
+  --color-garage-200: #afd5c8;
+  --color-garage-300: #7fb9a6;
+  --color-garage-400: #4f9a84;
+  --color-garage-500: #2f7c67;
+  --color-garage-600: #226552;
+  --color-garage-700: #1b5444;
+  --color-garage-800: #164238;
+  --color-garage-900: #0f332c;
+  --color-garage-950: #0b2520;
+
+  /* Latão: só para ações */
+  --color-brass: #f2b705;
+  --color-brass-dark: #d9a000;
+
+  --color-ink: #14221e;
+  --color-muted: #586964;
+  --color-concrete: #edf0ee;
+  --color-line: #d3dad7;
+
+  /* Telas antigas usam "blue-*": passam a herdar a nova marca */
+  --color-blue-50: var(--color-garage-50);
+  --color-blue-100: var(--color-garage-100);
+  --color-blue-200: var(--color-garage-200);
+  --color-blue-300: var(--color-garage-300);
+  --color-blue-400: var(--color-garage-400);
+  --color-blue-500: var(--color-garage-500);
+  --color-blue-600: var(--color-garage-600);
+  --color-blue-700: var(--color-garage-700);
+  --color-blue-800: var(--color-garage-800);
+  --color-blue-900: var(--color-garage-900);
+  --color-blue-950: var(--color-garage-950);
+}
+
+@layer base {
+  /* Tailwind v4 usa currentColor nas bordas: devolve um cinza discreto */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  body {
+    @apply bg-concrete font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-garage-600);
+    outline-offset: 2px;
+  }
+
+  .on-dark :focus-visible {
+    outline-color: var(--color-brass);
+  }
+}
+
+@layer components {
+  /* Papel milimetrado: painel escuro e miniaturas sem foto */
+  .blueprint {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .blueprint-light {
+    background-image:
+      linear-gradient(to right, rgb(15 51 44 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(15 51 44 / 0.06) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
