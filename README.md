@@ -1,8 +1,16 @@
-# Auto Parts (frontend)
+# Auto Parts (Frontend)
 
-Loja de autopeças full stack, feita como projeto de portfólio: catálogo com busca, carrinho, checkout com preenchimento de endereço pelo CEP, pedidos com acompanhamento de envio e painel administrativo para produtos e pedidos.
+Loja de autopeças full stack, desenvolvida como projeto de portfólio. Possui catálogo com busca, carrinho de compras, checkout com preenchimento automático de endereço pelo CEP, pedidos com acompanhamento de envio e painel administrativo para gerenciamento de produtos e pedidos.
 
-Este repositório é o **frontend**. A API (FastAPI + PostgreSQL) está em [auto-parts-backend](https://github.com/delberssoares/auto-parts-backend).
+Este repositório contém o **frontend**, desenvolvido com React e TypeScript. A API (FastAPI + PostgreSQL) está disponível no repositório [auto-parts-backend](https://github.com/delberssoares/auto-parts-backend).
+
+**🌐 [Acessar demonstração da loja](https://auto-parts-frontend-ten.vercel.app)**
+
+![Auto Parts Screenshot](src/docs/screenshots/main-screenshot.png)
+
+**📚 [Documentação da API (Swagger)](https://auto-parts-backend-bzag.onrender.com/docs)**
+
+## Tecnologias utilizadas
 
 ![CI](https://github.com/delberssoares/auto-parts-frontend/actions/workflows/ci.yml/badge.svg)
 ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
@@ -10,8 +18,7 @@ Este repositório é o **frontend**. A API (FastAPI + PostgreSQL) está em [auto
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-0F172A?logo=tailwindcss&logoColor=38BDF8)
 
-**Demonstração:** https://auto-parts-frontend-ten.vercel.app
-**Documentação da API (Swagger):** https://auto-parts-backend-bzag.onrender.com/docs
+**Backend:** [Repositório no GitHub](https://github.com/delberssoares/auto-parts-backend)
 
 > A API roda no plano gratuito do Render e "dorme" após 15 minutos sem acesso. Na primeira visita depois de um tempo parado, as peças podem levar até 1 minuto para aparecer. As visitas seguintes são rápidas.
 
