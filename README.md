@@ -60,9 +60,9 @@ Este repositório é o **frontend**. A API (FastAPI + PostgreSQL) está em [auto
 
 | Catálogo | Checkout com busca de CEP |
 |:--:|:--:|
-| ![Catálogo](docs/screenshots/catalogo.png) | ![Checkout](docs/screenshots/checkout.png) |
+| ![Catálogo](src/docs/screenshots/catalogo.png) | ![Checkout](src/docs/screenshots/checkout.png) |
 | **Pedido com linha do tempo** | **Painel de pedidos (admin)** |
-| ![Pedido](docs/screenshots/pedido.png) | ![Admin](docs/screenshots/admin-pedidos.png) |
+| ![Pedido](src/docs/screenshots/pedido.png) | ![Admin](src/docs/screenshots/admin-pedidos.png) |
 
 ## Stack
 
