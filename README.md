@@ -11,7 +11,7 @@ Este repositório é o **frontend**. A API (FastAPI + PostgreSQL) está em [auto
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-0F172A?logo=tailwindcss&logoColor=38BDF8)
 
 **Demonstração:** https://auto-parts-frontend-ten.vercel.app
-**Documentação da API (Swagger):** https://SEU-SERVICO.onrender.com/docs
+**Documentação da API (Swagger):** https://auto-parts-backend-bzag.onrender.com/docs
 
 > A API roda no plano gratuito do Render e "dorme" após 15 minutos sem acesso. Na primeira visita depois de um tempo parado, as peças podem levar até 1 minuto para aparecer. As visitas seguintes são rápidas.
 
